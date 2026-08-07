@@ -1,7 +1,4 @@
-console.log(hangok);
-console.log(hangkozok);
-console.log(hangnemek);
-console.log(szolmizacio);
+
 
 const kromatikusHangok = [
     "C",
