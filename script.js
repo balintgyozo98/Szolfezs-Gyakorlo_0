@@ -1,8 +1,3 @@
-console.log(hangok);
-console.log(hangkozok);
-console.log(hangnemek);
-console.log(szolmizacio);
-
 const kromatikusHangok = [
     "C",
     "Cisz",
@@ -33,7 +28,6 @@ const kromatikusHangok = [
     "oktáv": 12
 }; */
 const feladat = document.getElementById("feladat");
-
 
 
 /*const hangok = {
@@ -128,12 +122,7 @@ function javit(hangkozIndex) {
 };
 
 
-let index;
-let hangkozIndex;
-let megoldasHang;
-let hangkozFeladat;
-let kezdoHang;
-let celIndex;
+
 
 document.getElementById("ujFeladat").onclick = function(){
 
@@ -151,8 +140,12 @@ document.getElementById("ujFeladat").onclick = function(){
         "Feladat: "+ hangkozFeladat.hangkozNev +" "+ kezdoHang.abszolutNev + " hangról";
     
 };
-
-
+let index;
+let hangkozIndex;
+let megoldasHang;
+let hangkozFeladat;
+let kezdoHang;
+let celIndex;
 
 document.getElementById("megoldas").onclick = function(){
 
@@ -161,5 +154,10 @@ document.getElementById("megoldas").onclick = function(){
 
 
     hangLejatszas(megoldasHang.frekvencia);
+};
 
+document.getElementById("segítség").onclick = function(){
+
+    feladat.innerHTML =
+        "Segítség: " + hangkozFeladat.szolmizalva;
 };
