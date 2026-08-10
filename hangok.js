@@ -2,7 +2,7 @@ const hangok=[
 	{
 		midi: 48, 
 		frekvencia: 130.81,
-		abszolutNev: "3:"
+		abszolutNev: "C3:"
 	},
 
 	{
