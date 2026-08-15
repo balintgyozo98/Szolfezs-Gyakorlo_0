@@ -34,6 +34,30 @@ function hangLejatszas(frekvencia) {
     oszcillator.stop(audioContext.currentTime + 1);
 };
 
+function hangkozLejatszas(hang1,hang2) {
+
+    console.log("hang1: ", hang1.frekvencia);
+    console.log("hang2: ", hang2.frekvencia);
+
+    const most = audioContext.currentTime;
+
+    const osc1 = audioContext.createOscillator();
+    const osc2 = audioContext.createOscillator();
+    
+    osc1.frequency.value = hang1.frekvencia;
+    osc2.frequency.value = hang2.frekvencia;
+
+    osc1.connect(audioContext.destination);
+    osc2.connect(audioContext.destination);
+
+    
+    osc1.start(most);
+    osc2.start(most);
+
+    osc1.stop(most +1);
+    osc2.stop(most +1);
+};
+
 function harmashangzatLejatszas(hang1,hang2,hang3) {
     const most = audioContext.currentTime;
 
@@ -92,9 +116,6 @@ function ujHangkozFeladat() {
         " hangról";
 };
 
-
-
-
 function ujHarmashangzatFeladat() {
     index = Math.floor(
         Math.random() * (hangok.length - 5));
@@ -114,6 +135,7 @@ function ujHarmashangzatFeladat() {
     feladat.innerHTML = 
         "Feladat: " +
         kezdoHang.abszolutNev +"-re "+ harmashangzatNev + " hármas";
+        //hangLejatszas(60);
     };
         
 document.getElementById("megoldas").onclick = function(){
@@ -149,6 +171,23 @@ document.getElementById("segítség").onclick = function(){
     }
 };
 
+document.getElementById("egyszerre").onclick = function(){
+    if (aktualisTema === "hangkoz") {
+        feladat.innerHTML =
+        "Harmonia: " + hangkozFeladat.hangkozNev + " "+ kezdoHang.abszolutNev + " re";
+        const zongora = new Audio("hangok/C4v11.ogg");
+        zongora.play();
+        hangkozLejatszas(kezdoHang,megoldasHang);
+    }
+
+    if (aktualisTema === "harmashangzat") {
+        feladat.innerHTML = 
+        "Segítség: " + harmas_epito(harmashangzatNev);
+        //audiohangLejatszas(60);
+        console.log("KKKK"+kezdoHang.midi);
+        audioHarmashangzatLejatszas(kezdoHang.midi,terc.midi,kvint.midi);
+    }
+};
 
 function hangkozLepes(nev){
     const hangkoz = hangkozok.find(
@@ -169,4 +208,73 @@ function harmas_epito(nev) {
     if(nev === "Bővített") {
         return szolmizacio[0].szolmizacio + " - " + szolmizacio[2].szolmizacio + " - " + szolmizacio[4].szolmizacio;
     }
-}
+};
+
+
+function legkozelebbiMinta(midi) {
+
+    let minta = hangMintak[0];
+
+    for (let i = 1; i < hangMintak.length; i++) {
+
+        if(
+            Math.abs(hangMintak[i].midi -midi) <
+            Math.abs(minta.midi -midi)
+            ) { minta = hangMintak[i]; }
+    }
+    
+    return minta;
+};
+
+async function audiohangLejatszas(midi) {
+    const minta = legkozelebbiMinta(midi);
+
+    console.log("MIDI:", midi);
+    console.log("Minta:", minta);
+
+    const fajl = minta.fajl;
+
+    console.log("Betöltendő fájl: ", fajl);    
+
+    const response = await fetch(minta.fajl);
+
+    if(!response.ok){
+        throw new Error(
+            `Nem található a hangminta: ${minta.fajl}`
+        );
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+
+    const audioBuffer =
+        await audioContext.decodeAudioData(arrayBuffer);
+
+    const source = audioContext.createBufferSource();
+
+    source.buffer = audioBuffer;
+
+    source.playbackRate.value = 
+        Math.pow(2,(midi - minta.midi)/12);
+
+    source.connect(audioContext.destination);
+
+    source.start();
+
+    source.stop(audioContext.currentTime + 1);
+};
+
+async function audioHangkozLejatszas(midi1,midi2) {
+    await Promise.all([
+        audiohangLejatszas(midi1),
+        audiohangLejatszas(midi2)
+    ]);
+};
+
+async function audioHarmashangzatLejatszas(midi1, midi2,midi3) {
+    await Promise.all([
+        audiohangLejatszas(midi1),
+        audiohangLejatszas(midi2),
+        audiohangLejatszas(midi3)
+    ]);
+};
+

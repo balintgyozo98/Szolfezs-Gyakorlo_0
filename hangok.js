@@ -215,3 +215,6 @@ const hangok=[
 		abszolutNev: "H5"
 	}
 ];
+
+
+
